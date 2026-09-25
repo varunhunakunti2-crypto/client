@@ -76,10 +76,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       className={`${inter.variable} ${jakarta.variable} ${grotesk.variable} ${caveat.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <body className="flex min-h-full flex-col pb-16 lg:pb-0 bg-[#fbfbfd] text-[#232038] dark:bg-[#090d16] dark:text-[#f3f4f6] transition-colors duration-300" suppressHydrationWarning>
+      <body className="flex min-h-full flex-col pb-16 lg:pb-0 bg-[#fbfbfd] text-[#232038] transition-colors duration-300" suppressHydrationWarning>
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem("cp_theme");if(t==="dark"||(!t&&window.matchMedia("(prefers-color-scheme: dark)").matches)){document.documentElement.classList.add("dark");}else{document.documentElement.classList.remove("dark");}}catch(e){}})()`,
+            __html: `(function(){try{document.documentElement.classList.remove("dark");localStorage.removeItem("cp_theme");}catch(e){}})()`,
           }}
         />
         <Providers>

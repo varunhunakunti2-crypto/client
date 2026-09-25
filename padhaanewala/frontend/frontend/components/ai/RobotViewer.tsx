@@ -83,9 +83,8 @@ export function RobotViewer({
       backLight.position.set(0, 4, -4);
       scene.add(backLight);
 
-      // Helper to apply stealth black metallic palette in White mode matching reference image
+      // Helper to apply the stealth black metallic palette
       const applyThemeColor = (model: THREE.Group) => {
-        const isDark = document.documentElement.classList.contains("dark");
         const hsl = { h: 0, s: 0, l: 0 };
 
         model.traverse((child) => {
@@ -100,35 +99,24 @@ export function RobotViewer({
                     m.userData.origColor = m.color.clone();
                   }
 
-                  if (!isDark) {
-                    // White mode: stealth dark metallic black (as shown in image media_1789937995166)
-                    const nameLower = mesh.name.toLowerCase();
-                    m.userData.origColor.getHSL(hsl);
+                  const nameLower = mesh.name.toLowerCase();
+                  m.userData.origColor.getHSL(hsl);
 
-                    if (nameLower.includes("eye") || nameLower.includes("visor") || nameLower.includes("light")) {
-                      // Visor eyes -> Electric Cyan #00F0FF
-                      m.color.setHex(0x00f0ff);
-                    } else if (hsl.l > 0.5) {
-                      // Head, helmet, hands, limbs -> Stealth Dark Metallic Black #18181B
-                      m.color.setHex(0x18181b);
-                    } else if (hsl.l > 0.15 || nameLower.includes("chest") || nameLower.includes("torso")) {
-                      // Chest torso armor -> Dark Charcoal #27272A
-                      m.color.setHex(0x27272a);
-                    } else {
-                      // Joints & inner frame -> Deep Midnight Black #090D16
-                      m.color.setHex(0x090d16);
-                    }
-                    m.roughness = 0.35;
-                    m.metalness = 0.25;
+                  if (nameLower.includes("eye") || nameLower.includes("visor") || nameLower.includes("light")) {
+                    // Visor eyes -> Electric Cyan #00F0FF
+                    m.color.setHex(0x00f0ff);
+                  } else if (hsl.l > 0.5) {
+                    // Head, helmet, hands, limbs -> Stealth Dark Metallic Black #18181B
+                    m.color.setHex(0x18181b);
+                  } else if (hsl.l > 0.15 || nameLower.includes("chest") || nameLower.includes("torso")) {
+                    // Chest torso armor -> Dark Charcoal #27272A
+                    m.color.setHex(0x27272a);
                   } else {
-                    // Dark mode: restore original ceramic white & graphite model colors
-                    m.color.copy(m.userData.origColor);
-                    if (mesh.name.toLowerCase().includes("eye") || mesh.name.toLowerCase().includes("visor")) {
-                      m.color.setHex(0x38bdf8);
-                    }
-                    m.roughness = 0.35;
-                    m.metalness = 0.1;
+                    // Joints & inner frame -> Deep Midnight Black #090D16
+                    m.color.setHex(0x090d16);
                   }
+                  m.roughness = 0.35;
+                  m.metalness = 0.25;
                 }
               });
             }
@@ -166,7 +154,7 @@ export function RobotViewer({
           robotModel.rotation.set(0, rotationY, 0);
           initialY = robotModel.position.y;
 
-          // Apply initial theme color (black in white mode, original in dark mode)
+          // Apply the stealth black palette
           applyThemeColor(robotModel);
 
           // Enable & play all skeletal animation tracks smoothly with phase desynchronization
@@ -196,18 +184,6 @@ export function RobotViewer({
           setError(true);
         }
       );
-
-      // Listen to theme mode changes (dark <-> light toggle)
-      const themeObserver = new MutationObserver(() => {
-        if (robotModel) {
-          applyThemeColor(robotModel);
-        }
-      });
-
-      themeObserver.observe(document.documentElement, {
-        attributes: true,
-        attributeFilter: ["class"],
-      });
 
       // Mouse interaction handlers
       let mouseX = 0;
@@ -295,7 +271,6 @@ export function RobotViewer({
       return () => {
         cancelAnimationFrame(animationFrameId);
         resizeObserver.disconnect();
-        themeObserver.disconnect();
         if (interactive) {
           window.removeEventListener("mousemove", handleMouseMove);
         }

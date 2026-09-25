@@ -30,7 +30,6 @@ import {
 import { cn, initialsOf } from "@/lib/utils";
 import { ButtonLink } from "@/components/ui/Button";
 import { usePathname, useRouter } from "next/navigation";
-import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { useApp } from "@/lib/context/AppContext";
 
 const PRIMARY_NAV = [
@@ -219,9 +218,8 @@ export function Header() {
           </div>
         </nav>
 
-        {/* Right: Auth controls + Theme toggle */}
+        {/* Right: Auth controls */}
         <div className="hidden items-center gap-3 min-[900px]:flex">
-          <ThemeToggle />
           {isAuthenticated ? (
             <div className="relative" ref={authRef}>
               <button
@@ -300,7 +298,6 @@ export function Header() {
 
         {/* Mobile menu button (< 900px) */}
         <div className="flex items-center gap-2 min-[900px]:hidden">
-          <ThemeToggle />
           <button
             aria-label="Toggle menu"
             aria-expanded={open}

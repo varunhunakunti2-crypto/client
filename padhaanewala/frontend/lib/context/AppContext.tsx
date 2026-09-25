@@ -44,8 +44,6 @@ interface AppContextValue {
   testHistory: MockTestResult[];
   notifications: NotificationItem[];
   reviews: Review[];
-  darkMode: boolean;
-  toggleDarkMode: () => void;
 
   isAuthenticated: boolean;
   authReady: boolean;
@@ -122,7 +120,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [testHistory, setTestHistory] = useState<MockTestResult[]>([]);
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
-  const [darkMode, setDarkMode] = useState<boolean>(false);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [authReady, setAuthReady] = useState<boolean>(false);
   const [prefs, setPrefsState] = useState<NotificationPrefs>({
@@ -154,32 +151,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setIsAuthenticated(Boolean(window.localStorage.getItem("cp_access_token")));
     setAuthReady(true);
 
-    const savedTheme = typeof window !== "undefined" ? localStorage.getItem("cp_theme") : null;
-    const isDark = savedTheme
-      ? savedTheme === "dark"
-      : typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: dark)").matches;
-    setDarkMode(isDark);
-    if (isDark) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
+    document.documentElement.classList.remove("dark");
+    window.localStorage.removeItem("cp_theme");
 
     hydrated.current = true;
-  }, []);
-
-  const toggleDarkMode = useCallback(() => {
-    setDarkMode((prev) => {
-      const next = !prev;
-      if (next) {
-        document.documentElement.classList.add("dark");
-        localStorage.setItem("cp_theme", "dark");
-      } else {
-        document.documentElement.classList.remove("dark");
-        localStorage.setItem("cp_theme", "light");
-      }
-      return next;
-    });
   }, []);
 
   useEffect(() => {
@@ -448,8 +423,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
       testHistory,
       notifications,
       reviews,
-      darkMode,
-      toggleDarkMode,
       isAuthenticated,
       authReady,
       setAuthenticated,
@@ -496,8 +469,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
       testHistory,
       notifications,
       reviews,
-      darkMode,
-      toggleDarkMode,
       isAuthenticated,
       authReady,
       setAuthenticated,
